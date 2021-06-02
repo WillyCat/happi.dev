@@ -132,7 +132,7 @@ class music extends api
 
 class search extends music
 {
-	// 'https://api.happi.dev/v1/music?q=test&limit=10&apikey=8c10a65xBarfkAz4Bg6kMqJ9rJ52tEA4qBnjAyFiRCqYNPzp5I6FC5nM&type=track&lyrics=0';
+	// 'https://api.happi.dev/v1/music?q=test&limit=10&apikey=(key)&type=track&lyrics=0';
 
 	public function
 	__construct (string $api_key, array $argsValues)
