@@ -3,6 +3,8 @@
 require_once '../tinyHttp/tinyHttp.class.php';
 require_once 'happi.dev.class.php';
 
+echo 'tinyHttp version: ' . tinyHttp::getVersion() . "\n";
+
 $api_key = trim(file_get_contents ('key'));
 
 echo "------------------" . "\n";

@@ -6,6 +6,7 @@ namespace happi;
 Version   Date        Change
 --------  ----------  -----------------------------------------------------
 0.1       2021-05-26  Initial version
+0.2       2022-07-23  bug fix in error handling
 */
 
 // a very simple implementation of Happi.dev music API
@@ -64,9 +65,14 @@ class api extends baseclass
 		$this -> u -> setQuery($this -> args);
 
 		$http = new \tinyHttp ();
+//$http -> setDebugChannel('stdout');
+//$http -> setDebugLevel(1);
+//echo 'debug channel: ' . $http -> getDebugChannel() . "\n";
+//echo 'debug level: ' . $http -> getDebugLevel() . "\n";
 		$http -> setUrl ($this -> u);
 
 		$r = $http->send();
+//die();
 
 		//-------------
 		// Headers
@@ -103,7 +109,7 @@ class api extends baseclass
 		if (!array_key_exists ('success', $a))
 			throw new Exception ('reply does not include success node');
 		if ($a['success'] == false)
-			throw new Exception ($a['error']);
+			throw new Exception ($a['error']['message']);
 
 		switch ($r -> getStatus() )
 		{
