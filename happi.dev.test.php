@@ -3,6 +3,20 @@
 require_once '../tinyHttp/tinyHttp.class.php';
 require_once 'happi.dev.class.php';
 
+function
+cache_func (string $action, string $url, ?string $body = null): string|bool|null
+{
+	switch ($action)
+	{
+	case 'valid' : // true if in cache, false otherwise
+		return false;
+	case 'get' : // return content from cache or null if invalid or not available
+		return null;
+	case 'set' : // set cache
+		return true;
+	}
+}
+
 echo 'tinyHttp version: ' . tinyHttp::getVersion() . "\n";
 
 $api_key = trim(file_get_contents ('key'));
@@ -11,38 +25,30 @@ echo "------------------" . "\n";
 echo "SEARCH" . "\n";
 echo "------------------" . "\n";
 
-$s = new happi\search($api_key, [
-	'q' => 'michel sardou afrique adieu',
-	'type' => 'track'
-]);
+try
+{
+	$s = new happi\HappiLyricsSearch(key: $api_key, artist: 'michel sardou', track: 'afrique adieu', cache: 'cache_func');
+	$lyrics = $s -> getLyrics();
+} catch (Exception $e) {
+	echo 'ERROR' . PHP_EOL;
+	echo $e -> getMessage() . PHP_EOL;
+	die();
+}
+$credits = $s -> getCredits();
 
-echo 'URL: ' . $s -> u . "\n";
+echo 'Credits: ' . $credits . PHP_EOL;
+echo PHP_EOL;
+
 $i = 1;
-foreach ($s -> result as $r)
+foreach ($lyrics as $r)
 {
 	echo '#' . ($i++) . "\n";
-	echo 'Artist: ' . $r['artist'] . ' (id: '.$r['id_artist'] . ')' . "\n";
-	echo 'Album: ' . $r['album'] . ' (id: '.$r['id_album'] . ')' . "\n";
-	echo 'Track: ' . $r['track'] . ' (id: '.$r['id_track'] . ')' . "\n";
-	echo 'Cover: ' . $r['cover'] . "\n";
-	echo 'Has lyrics: ' . ($r['haslyrics']?'yes':'no') . "\n";
-	echo 'api_lyrics: ' . ($r['api_lyrics']) . "\n";
-	echo "\n";
-
-	if ($r ['haslyrics'])
-		$api_lyrics = $r['api_lyrics'];
+	echo 'Artist: ' . $r['artist'] . PHP_EOL;
+	echo 'Track: ' . $r['track'] . PHP_EOL;
+	echo 'Lyrics: ' . $r['lyrics'] . PHP_EOL;
+	echo 'Written by: ' . $r['written_by'] . PHP_EOL;
+	echo 'copyright: ' . $r['copyright'] . PHP_EOL;
+	echo PHP_EOL;
 }
-echo 'Credits: ' . $s -> credits . "\n";
-
-echo "------------------" . "\n";
-echo "LYRICS" . "\n";
-echo "------------------" . "\n";
-
-$l = new happi\lyrics($api_key, $api_lyrics);
-echo $l -> getLyrics() . "\n";
-echo 'Credits: ' . $s -> credits . "\n";
-
-// https://api.happi.dev/v1/music/artists/2806/albums/425667/tracks/6440082/lyrics
-// &apikey=8c10a65xBarfkAz4Bg6kMqJ9rJ52tEA4qBnjAyFiRCqYNPzp5I6FC5nM
 
 ?>
